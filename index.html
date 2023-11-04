@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Interactive SVG Blob</title>
+  <style>
+    <svg style="display: none;">
+      <defs>
+        <filter id="noise">
+          <feTurbulence
+            baseFrequency="0.7,0.8"
+            seed="0"
+            type="fractalNoise"
+            result="static"
+          >
+            <animate
+              attributeName="seed"
+              values="0;100"
+              dur="800ms"
+              repeatCount="indefinite"
+            />
+          </feTurbulence>
+          <feDisplacementMap in="SourceGraphic" in2="static">
+            <animate
+              attributeName="scale"
+              values="0;40;0"
+              dur="800ms"
+              repeatCount="indefinite"
+              begin="blob.mouseenter"
+            />
+          </feDisplacementMap>
+        </filter>
+      </defs>
+    </svg>
+
+    :root {
+      --background-rgb: 29 30 20;
+      --blue-rgb: 33 150 243;
+      --blob-color-1: rgb(var(--blue-rgb));
+      --blob-color-2: dodgerblue;
+    }
+
+    body {
+      height: 100vh;
+      display: grid;
+      place-items: center;
+      background-color: rgb(var(--background-rgb));
+      margin: 0rem;
+      overflow: hidden;
+    }
+
+    @keyframes rotate {
+      from {
+        transform: rotate(0deg);
+      }
+
+      50% {
+        transform: scale(1, 1.5);
+      }
+
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    #blob {
+      background-color: white;
+      height: 34vmax;
+      aspect-ratio: 1;
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      border-radius: 50%;
+      background: linear-gradient(to right, var(--blob-color-1), var(--blob-color-2));
+      animation: rotate 20s infinite;
+      opacity: 0.5;
+      filter: url(#noise);
+    }
+
+    #blur {
+      height: 100%;
+      width: 100%;
+      position: absolute;
+      z-index: 2;
+      backdrop-filter: blur(12vmax);
+    }
+  </style>
+</head>
+<body>
+  <div id="blob"></div>
+  <div id="blur"></div>
+  <script>
+    const blob = document.getElementById("blob");
+
+    window.onpointermove = event => {
+      const { clientX, clientY } = event;
+
+      blob.animate({ left: `${clientX}px`, top: `${clientY}px` }, { duration: 3000, fill: "forwards" });
+    }
+  </script>
+</body>
+</html>
+
